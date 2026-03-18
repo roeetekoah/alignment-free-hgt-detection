@@ -1,6 +1,5 @@
 import argparse
 import importlib.util
-import os
 import subprocess
 import sys
 import tempfile
@@ -87,9 +86,8 @@ class RegressionBaselines(unittest.TestCase):
 
             run_python(
                 cmd,
-                cwd=REPO_ROOT,
+                cwd=SRC_DIR,
                 timeout_sec=7200,
-                env={**os.environ, "PYTHONPATH": str(SRC_DIR)},
             )
 
             for name in [
@@ -167,7 +165,8 @@ class RegressionBaselines(unittest.TestCase):
 
             run_python(
                 [
-                    str(GRAPH_CONSTRUCTION_DIR / "kmer_candidates_from_faa.py"),
+                    "-m",
+                    "hgt_pipeline.graph_construction.kmer_candidates_from_faa",
                     "--manifest",
                     str(GOLDEN_DIR / "reference_inputs" / "manifest_tiny_set.tsv"),
                     "--downloads_dir",
@@ -186,7 +185,7 @@ class RegressionBaselines(unittest.TestCase):
                     "10",
                     "--cross_species_only",
                 ],
-                cwd=REPO_ROOT,
+                cwd=SRC_DIR,
                 timeout_sec=900,
             )
 
@@ -245,12 +244,10 @@ class RegressionBaselines(unittest.TestCase):
             tmp_dir = Path(tmp_dir_str)
 
             out_candidates = tmp_dir / "candidates.tsv"
-            env = os.environ.copy()
-            env["PYTHONPATH"] = os.pathsep.join([str(SRC_DIR), env.get("PYTHONPATH", "")])
-
             run_python(
                 [
-                    str(GRAPH_CONSTRUCTION_DIR / "kmer_candidates_from_faa.py"),
+                    "-m",
+                    "hgt_pipeline.graph_construction.kmer_candidates_from_faa",
                     "--manifest",
                     str(SRC_DIR / "data" / "out_refseq" / "manifest.tsv"),
                     "--downloads_dir",
@@ -269,9 +266,8 @@ class RegressionBaselines(unittest.TestCase):
                     "10",
                     "--cross_species_only",
                 ],
-                cwd=REPO_ROOT,
+                cwd=SRC_DIR,
                 timeout_sec=14400,
-                env=env,
             )
 
             actual = pd.read_csv(out_candidates, sep="\t")
