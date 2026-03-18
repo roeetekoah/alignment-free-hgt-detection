@@ -42,7 +42,7 @@ from typing import Dict, Iterator, List, Optional, Set, Tuple
 import urllib.request
 
 try:
-    from hgt_pipeline.stages.fasta_parsing import iter_fasta_gz, protein_id_from_header
+    from hgt_pipeline.graph_construction.fasta_parsing import iter_fasta_gz, protein_id_from_header
 except ImportError:
     from fasta_parsing import iter_fasta_gz, protein_id_from_header
 

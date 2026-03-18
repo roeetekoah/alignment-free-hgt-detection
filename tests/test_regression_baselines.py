@@ -15,6 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 REPORTING_DIR = SRC_DIR / "reporting"
 STAGES_DIR = SRC_DIR / "hgt_pipeline" / "stages"
+GRAPH_CONSTRUCTION_DIR = SRC_DIR / "hgt_pipeline" / "graph_construction"
 GOLDEN_DIR = SRC_DIR / "golden"
 RUN_GRAPH_PIPELINE_REGRESSION = False
 RUN_GRAPH_PIPELINE_BW_REGRESSION = False
@@ -146,7 +147,7 @@ class RegressionBaselines(unittest.TestCase):
             pd.testing.assert_frame_equal(stats_actual, stats_expected, check_dtype=False)
 
     def test_fasta_parsing_smoke_against_repo_data(self):
-        fasta_parsing = load_module(STAGES_DIR / "fasta_parsing.py", "fasta_parsing")
+        fasta_parsing = load_module(GRAPH_CONSTRUCTION_DIR / "fasta_parsing.py", "fasta_parsing")
         manifest = GOLDEN_DIR / "reference_inputs" / "manifest_tiny_set.tsv"
         species_map = fasta_parsing.load_manifest_species_map(manifest)
 
@@ -166,7 +167,7 @@ class RegressionBaselines(unittest.TestCase):
 
             run_python(
                 [
-                    str(STAGES_DIR / "kmer_candidates_from_faa.py"),
+                    str(GRAPH_CONSTRUCTION_DIR / "kmer_candidates_from_faa.py"),
                     "--manifest",
                     str(GOLDEN_DIR / "reference_inputs" / "manifest_tiny_set.tsv"),
                     "--downloads_dir",
@@ -194,7 +195,7 @@ class RegressionBaselines(unittest.TestCase):
             pd.testing.assert_frame_equal(actual, expected, check_dtype=False)
 
     def test_pruning_logic_matches_edges_pruned_baseline(self):
-        graph_pruning = load_module(STAGES_DIR / "graph_pruning.py", "graph_pruning")
+        graph_pruning = load_module(GRAPH_CONSTRUCTION_DIR / "graph_pruning.py", "graph_pruning")
 
         candidates_path = GOLDEN_DIR / "reference_inputs" / "candidates_tiny_set.tsv"
         baseline_path = GOLDEN_DIR / "reference_inputs" / "edges_pruned_tiny.tsv"
@@ -249,7 +250,7 @@ class RegressionBaselines(unittest.TestCase):
 
             run_python(
                 [
-                    str(STAGES_DIR / "kmer_candidates_from_faa.py"),
+                    str(GRAPH_CONSTRUCTION_DIR / "kmer_candidates_from_faa.py"),
                     "--manifest",
                     str(SRC_DIR / "data" / "out_refseq" / "manifest.tsv"),
                     "--downloads_dir",
