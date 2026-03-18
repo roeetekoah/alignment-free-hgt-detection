@@ -11,7 +11,7 @@ No `reproduce.py` wrapper is required.
 From repository root (PowerShell):
 
 ```powershell
-$env:PYTHONPATH = "src"
+python -m pip install -e .
 ```
 
 ## A) Start From `config/species.txt` + `data/assembly_summary_refseq.txt`
@@ -109,4 +109,3 @@ Note:
 ```powershell
 curl.exe -L -o data/assembly_summary_refseq.txt https://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_refseq.txt
 ```
-
