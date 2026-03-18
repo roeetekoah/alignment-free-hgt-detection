@@ -2,8 +2,17 @@
 
 Alignment-free detection of horizontal gene transfer (HGT) candidates via protein similarity graphs, species-pair robust normalization, and graph anomaly scoring.
 
-Paper title:
-**Alignment-Free Detection of Horizontal Gene Transfer Candidates via Protein Similarity Graphs and Anomaly Scoring**
+## Overview
+
+The method treats proteins as nodes in a cross-species similarity graph, then scores proteins/components for HGT-like behavior using graph structure and species-pair-normalized edge surprise.
+
+Technically, the project has two parts:
+- `graph_construction`: builds candidate protein similarity edges and prunes them into a graph input.
+- `hgt_pipeline`: consumes a pruned edge list and produces edge/node/component features plus ranked HGT candidates.
+
+There are two practical entry paths:
+- Minimal-input path: start from `data/assembly_summary_refseq.txt` + `config/species.txt`, build manifest/downloads/candidates/pruned edges, then run the pipeline.
+- Shortcut path: use the preincluded canonical pruned graph `golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv` and run `hgt_pipeline` directly.
 
 ## Repository layout
 
@@ -24,21 +33,7 @@ From repository root (PowerShell), install once:
 python -m pip install -e .
 ```
 
-### 1) Graph Construction (runs first)
-
-This stage produces the pruned edge list consumed by `hgt_pipeline.pipeline`.
-
-```powershell
-python -m graph_construction.orchestrator construct-edges --manifest data\out_refseq\manifest.tsv --downloads_dir data\out_refseq\downloads --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
-```
-
-For the full canonical run, the repository already includes the pruned input:
-- `golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv`
-
-Canonical graph-construction manifest is tracked at:
-- `data/out_refseq/manifest.tsv`
-
-### 2) HGT Pipeline (graph input -> features/candidates)
+Run the canonical pipeline input (preincluded in repo):
 
 With betweenness:
 
