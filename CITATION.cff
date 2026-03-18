@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Alignment-Free Detection of Horizontal Gene Transfer Candidates via Protein Similarity Graphs and Anomaly Scoring"
+version: "0.1.0"
+date-released: 2026-03-18
+repository-code: "https://github.com/roeetekoah/alignment-free-hgt-detection"
+authors:
+  - family-names: "Forshmit"
+    given-names: "Or"
+    email: "or.forshmit@mail.huji.ac.il"
+    affiliation: "The Hebrew University of Jerusalem"
+  - family-names: "Kimhi"
+    given-names: "Noam"
+    email: "noam.kimhi@mail.huji.ac.il"
+    affiliation: "The Hebrew University of Jerusalem"
+  - family-names: "Tekoah"
+    given-names: "Roee"
+    email: "roee.tekoah@mail.huji.ac.il"
+    affiliation: "The Hebrew University of Jerusalem"
+  - family-names: "Stein"
+    given-names: "Dor"
+    email: "dor.stein@mail.huji.ac.il"
+    affiliation: "The Hebrew University of Jerusalem"
+  - family-names: "Korkos"
+    given-names: "Noam"
+    email: "noam.korkos@mail.huji.ac.il"
+    affiliation: "The Hebrew University of Jerusalem"
