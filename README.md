@@ -40,6 +40,30 @@ python -m graph_construction.orchestrator --help
 python -m hgt_pipeline.pipeline --help
 ```
 
+## Reproduce Component Plots (5, 8, 32)
+
+From repository root (PowerShell):
+
+```powershell
+$env:PYTHONPATH = "src"
+
+python tools/reporting/plot_components.py `
+  --edges artifacts/legacy_runs/out/edge_features.tsv `
+  --protein_features artifacts/legacy_runs/out/protein_features.tsv `
+  --hgt_candidates artifacts/legacy_runs/out/hgt_candidates.tsv `
+  --component_ids 5,8,32 `
+  --node_size_mode constant `
+  --out_dir artifacts/updated_plots/simplified
+
+python tools/reporting/plot_components.py `
+  --edges artifacts/legacy_runs/out/edge_features.tsv `
+  --protein_features artifacts/legacy_runs/out/protein_features.tsv `
+  --hgt_candidates artifacts/legacy_runs/out/hgt_candidates.tsv `
+  --component_ids 5,8,32 `
+  --node_size_mode score `
+  --out_dir artifacts/updated_plots/detailed
+```
+
 ## Regression tests
 
 Default fast gate (recommended while refactoring):
