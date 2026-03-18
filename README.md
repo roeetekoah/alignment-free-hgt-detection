@@ -35,6 +35,9 @@ python -m graph_construction.orchestrator construct-edges --manifest data\out_re
 For the full canonical run, the repository already includes the pruned input:
 - `golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv`
 
+Canonical graph-construction manifest is tracked at:
+- `data/out_refseq/manifest.tsv`
+
 ### 2) HGT Pipeline (graph input -> features/candidates)
 
 With betweenness:

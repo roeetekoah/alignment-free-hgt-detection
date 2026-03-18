@@ -16,6 +16,9 @@ python -m pip install -e .
 
 ## A) Start From `config/species.txt` + `data/assembly_summary_refseq.txt`
 
+Canonical manifest is tracked in the repo at:
+- `data/out_refseq/manifest.tsv`
+
 1. Build manifest from assembly summary and species config:
 
 ```powershell

@@ -1,6 +1,10 @@
 /scripts/data/
-/data/
+/data/*
 /archives/
+!/data/
+!/data/out_refseq/
+/data/out_refseq/*
+!/data/out_refseq/manifest.tsv
 
 # Python cache/artifacts
 __pycache__/
