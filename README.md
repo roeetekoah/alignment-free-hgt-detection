@@ -32,10 +32,12 @@ $env:PYTHONPATH = "src"
 python -m graph_construction.orchestrator construct-edges --manifest golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
 ```
 
-End-to-end recipes for reviewers are in [`REPRODUCE.md`](REPRODUCE.md) and can be run via:
+Reviewer-facing, module-only E2E command lines are documented in [`REPRODUCE.md`](REPRODUCE.md).
 
 ```powershell
-python reproduce.py --help
+python -m graph_construction.refseq_fetch_proteins --help
+python -m graph_construction.orchestrator --help
+python -m hgt_pipeline.pipeline --help
 ```
 
 ## Regression tests
