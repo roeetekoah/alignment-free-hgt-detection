@@ -9,32 +9,6 @@ AA_TABLE = [255] * 256
 for aa, i in AA_TO_INT.items():
     AA_TABLE[ord(aa)] = i
 
-# not used in optimized version
-'''def encode_kmer_aa(kmer: str) -> int:
-    """
-    Encode a canonical-AA kmer into a unique integer. Returns -1 if any char not in alphabet.
-    """
-    v = 0
-    for ch in kmer:
-        i = AA_TO_INT.get(ch)
-        if i is None:
-            return -1
-        v = v * BASE + i
-    return v'''
-
-# Un-optimized
-'''def kmers_encoded_set(seq: str, k: int) -> Set[int]:
-    """
-    Return set of encoded k-mers. Skips kmers containing non-canonical AAs.
-    """
-    out: Set[int] = set()
-    n = len(seq)
-    for i in range(n - k + 1):
-        code = encode_kmer_aa(seq[i:i+k])
-        if code != -1:
-            out.add(code)
-    return out'''
-
 def kmers_encoded_set(seq: str, k: int) -> Set[int]:
     """
     Return set of encoded k-mers. Skips kmers containing non-canonical AAs.
