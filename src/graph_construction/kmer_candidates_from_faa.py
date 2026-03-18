@@ -28,8 +28,8 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple, Union
 
 try:
-    from hgt_pipeline.graph_construction.k_mer_encoding import kmers_encoded_set
-    from hgt_pipeline.graph_construction.fasta_parsing import (
+    from graph_construction.k_mer_encoding import kmers_encoded_set
+    from graph_construction.fasta_parsing import (
         iter_fasta_gz,
         protein_id_from_header,
         load_manifest_species_map,

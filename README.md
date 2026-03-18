@@ -8,7 +8,7 @@ Paper title:
 ## Repository layout
 
 - `src/hgt_pipeline/`: core pipeline package
-- `src/hgt_pipeline/graph_construction/`: pre-pipeline graph-construction steps (FASTA parsing, k-mer candidates, pruning)
+- `src/graph_construction/`: pre-pipeline graph-construction steps (FASTA parsing, k-mer candidates, pruning)
 - `src/hgt_pipeline/stages/`: graph-analysis stages used by `pipeline.py`
 - `src/reporting/`: reporting/explanation scripts
 - `src/golden/`: regression baselines (canonical reference artifacts)
@@ -28,7 +28,7 @@ Graph-construction orchestration (manifest/downloads -> candidates -> pruned edg
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m hgt_pipeline.graph_construction.orchestrator construct-edges --manifest src/golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir src/golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
+python -m graph_construction.orchestrator construct-edges --manifest src/golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir src/golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
 ```
 
 ## Regression tests

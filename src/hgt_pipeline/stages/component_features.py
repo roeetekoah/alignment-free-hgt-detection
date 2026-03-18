@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
-from hgt_pipeline.stages.node_features import entropy_from_counts, topk_mean
+from .node_features import entropy_from_counts, topk_mean
 
 
 @dataclass

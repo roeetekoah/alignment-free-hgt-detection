@@ -14,7 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 REPORTING_DIR = SRC_DIR / "reporting"
 STAGES_DIR = SRC_DIR / "hgt_pipeline" / "stages"
-GRAPH_CONSTRUCTION_DIR = SRC_DIR / "hgt_pipeline" / "graph_construction"
+GRAPH_CONSTRUCTION_DIR = SRC_DIR / "graph_construction"
 GOLDEN_DIR = SRC_DIR / "golden"
 RUN_GRAPH_PIPELINE_REGRESSION = False
 RUN_GRAPH_PIPELINE_BW_REGRESSION = False
@@ -166,12 +166,13 @@ class RegressionBaselines(unittest.TestCase):
             run_python(
                 [
                     "-m",
-                    "hgt_pipeline.graph_construction.kmer_candidates_from_faa",
+                    "graph_construction.orchestrator",
+                    "build-candidates",
                     "--manifest",
                     str(GOLDEN_DIR / "reference_inputs" / "manifest_tiny_set.tsv"),
                     "--downloads_dir",
                     str(GOLDEN_DIR / "reference_inputs" / "downloads_tiny"),
-                    "--out",
+                    "--out_candidates",
                     str(out_candidates),
                     "--k",
                     "6",
@@ -183,7 +184,6 @@ class RegressionBaselines(unittest.TestCase):
                     "6",
                     "--top_m",
                     "10",
-                    "--cross_species_only",
                 ],
                 cwd=SRC_DIR,
                 timeout_sec=900,
@@ -247,12 +247,13 @@ class RegressionBaselines(unittest.TestCase):
             run_python(
                 [
                     "-m",
-                    "hgt_pipeline.graph_construction.kmer_candidates_from_faa",
+                    "graph_construction.orchestrator",
+                    "build-candidates",
                     "--manifest",
                     str(SRC_DIR / "data" / "out_refseq" / "manifest.tsv"),
                     "--downloads_dir",
                     str(SRC_DIR / "data" / "out_refseq" / "downloads"),
-                    "--out",
+                    "--out_candidates",
                     str(out_candidates),
                     "--k",
                     "6",
@@ -264,7 +265,6 @@ class RegressionBaselines(unittest.TestCase):
                     "6",
                     "--top_m",
                     "10",
-                    "--cross_species_only",
                 ],
                 cwd=SRC_DIR,
                 timeout_sec=14400,

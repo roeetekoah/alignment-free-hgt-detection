@@ -8,24 +8,24 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from hgt_pipeline.stages.component_features import (
+from .stages.component_features import (
     compute_component_features,
     write_component_features,
 )
-from hgt_pipeline.stages.edge_io import dedupe_edges, read_edges
-from hgt_pipeline.stages.graph_ops import (
+from .stages.edge_io import dedupe_edges, read_edges
+from .stages.graph_ops import (
     attach_edge_z_to_graph,
     build_graph,
     compute_components,
 )
-from hgt_pipeline.stages.node_features import compute_node_features, write_node_features
-from hgt_pipeline.stages.pair_stats import (
+from .stages.node_features import compute_node_features, write_node_features
+from .stages.pair_stats import (
     compute_edge_features,
     compute_pair_robust_stats,
     print_pair_stats_sanity_table,
     write_edge_features,
 )
-from hgt_pipeline.stages.ranking import (
+from .stages.ranking import (
     score_hgt_likeness,
     write_all_scores,
     write_hgt_candidates,

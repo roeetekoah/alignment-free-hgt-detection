@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
-from hgt_pipeline.stages.edge_io import Edge
+from .edge_io import Edge
 
 
 @dataclass

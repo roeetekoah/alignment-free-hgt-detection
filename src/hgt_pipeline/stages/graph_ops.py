@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
-from hgt_pipeline.stages.edge_io import Edge
-from hgt_pipeline.stages.pair_stats import EdgeFeatures
+from .edge_io import Edge
+from .pair_stats import EdgeFeatures
 
 try:
     import networkx as nx

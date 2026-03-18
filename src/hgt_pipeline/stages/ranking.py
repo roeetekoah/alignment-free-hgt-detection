@@ -4,9 +4,9 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from hgt_pipeline.stages.component_features import ComponentFeatures
-from hgt_pipeline.stages.node_features import NodeFeatures
-from hgt_pipeline.stages.pair_stats import mad, median
+from .component_features import ComponentFeatures
+from .node_features import NodeFeatures
+from .pair_stats import mad, median
 
 
 def _minmax_scale(values: List[float]) -> List[float]:
