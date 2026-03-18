@@ -47,14 +47,6 @@ Without betweenness (faster):
 python -m hgt_pipeline.pipeline --in_edges golden\reference_inputs\edges_PRUNED_JACCARD_92790.tsv --out_dir tmp_run_no_bw --no_betweenness
 ```
 
-Reviewer-facing, module-only E2E command lines are documented in [`REPRODUCE.md`](REPRODUCE.md).
-
-```powershell
-python -m graph_construction.refseq_fetch_proteins --help
-python -m graph_construction.orchestrator --help
-python -m hgt_pipeline.pipeline --help
-```
-
 ## Full E2E Recipe (Reviewers)
 
 From repository root (PowerShell):
