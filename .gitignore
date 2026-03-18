@@ -22,6 +22,8 @@ src/artifacts/historical_results/
 # Large sequence inputs
 *.faa
 *.faa.gz
+!src/golden/reference_inputs/downloads_tiny/
+!src/golden/reference_inputs/downloads_tiny/*.faa.gz
 
 # Misc local outputs
 *.log
