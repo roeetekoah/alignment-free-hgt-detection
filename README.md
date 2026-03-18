@@ -32,6 +32,12 @@ $env:PYTHONPATH = "src"
 python -m graph_construction.orchestrator construct-edges --manifest golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
 ```
 
+End-to-end recipes for reviewers are in [`REPRODUCE.md`](REPRODUCE.md) and can be run via:
+
+```powershell
+python reproduce.py --help
+```
+
 ## Regression tests
 
 Default fast gate (recommended while refactoring):
@@ -57,6 +63,9 @@ python tests/test_regression_baselines.py --mode graph_bw
 
 Large raw data is not tracked in git (`data/` ignored).  
 Regression relies on `golden/` fixtures, including small deterministic test inputs.
+
+`data/assembly_summary_refseq.txt` is intentionally not tracked (very large; ~216 MB).
+Fetch it directly from NCBI when needed (see `REPRODUCE.md`).
 
 ## Citation
 

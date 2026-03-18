@@ -108,48 +108,6 @@ def build_kmer_index(
     k: int,
     max_postings: int,
 ) -> tuple[list[list[int]], dict[int, list[int]]]:
-    '''index: Dict[int, List[int]] = defaultdict(list)
-    K: List[Set[int]] = []
-
-    total = len(seqs)
-    for i, seq in enumerate(seqs):
-        if (i + 1) % 50000 == 0:
-            # sample current posting list sizes
-            lens = [len(lst) for lst in index.values()]
-            if lens:
-                lens.sort()
-                p99 = lens[int(0.99 * (len(lens) - 1))]
-                print(f"[INDEX-PROG] after {i + 1} proteins: distinct={len(index):,}, max_post={lens[-1]}, p99={p99}")
-
-        if (i + 1) % 5000 == 0 or i == 0 or (i + 1) == total:
-            print(f"[KMERS] {i+1}/{total}")
-
-        ks = kmers_encoded_set(seq, k)
-        K.append(ks)
-        for code in ks:
-            index[code].append(i)
-
-    before = len(index)
-
-    lens = sorted(len(lst) for lst in index.values())
-    if lens:
-        p95 = lens[int(0.95 * (len(lens) - 1))]
-        p99 = lens[int(0.99 * (len(lens) - 1))]
-        print(f"[INDEX] posting sizes: max={lens[-1]}, p99={p99}, p95={p95}, median={lens[len(lens) // 2]}")
-
-    if max_postings > 0:
-        index = {code: lst for code, lst in index.items() if len(lst) <= max_postings}
-
-        kept = set(index.keys())
-        # prune per-protein sets too (THIS matters a lot for speed later)
-        for i in range(len(K)):
-            K[i].intersection_update(kept)
-
-    after = len(index)
-    print(f"[INDEX] kmers before prune: {before:,}, after prune: {after:,} (max_postings={max_postings})")
-
-    return K, index'''
-
     index: Dict[int, List[int]] = defaultdict(list)
     K: List[List[int]] = []
 
@@ -196,68 +154,6 @@ def build_kmer_index(
 def jaccard(intersection: int, a: int, b: int) -> float:
     denom = a + b - intersection
     return 0.0 if denom <= 0 else intersection / denom
-
-
-'''def generate_candidates(
-    prot_uid: List[str],
-    species_id: List[int],
-    species_name: List[str],
-    K: List[Set[int]],
-    index: Dict[int, List[int]],
-    min_shared: int,
-    top_m: int,
-    out_path: Path,
-    cross_species_only: bool = True
-) -> None:
-    """
-    For each protein p, count shared kmers with others via index, keep cross-species only,
-    then output top_m matches with shared>=min_shared and Jaccard.
-    """
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    total = len(prot_uid)
-    k_sizes = [len(ks) for ks in K]
-
-    with open(out_path, "w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f, delimiter="\t")
-        w.writerow(["u", "v", "shared_kmers", "jaccard", "species_u", "species_v"])
-
-        for p in range(total):
-            if (p + 1) % 2000 == 0 or p == 0 or (p + 1) == total:
-                print(f"[CAND] {p+1}/{total}")
-
-            sp_p = species_id[p]
-            shared = Counter()
-
-            # Count intersections via posting lists
-            for code in K[p]:
-                for q in index.get(code, ()):
-                    if q == p:
-                        continue
-                    if species_id[q] == sp_p:
-                        continue  # cross-species only
-                    shared[q] += 1
-
-            if not shared:
-                continue
-
-            # Filter + cap
-            items = [(q, c) for q, c in shared.items() if c >= min_shared]
-            if not items:
-                continue
-            items.sort(key=lambda t: t[1], reverse=True)
-            items = items[:top_m]
-
-            # Write edges
-            u = prot_uid[p]
-            sp_u = species_name[sp_p]
-            a = k_sizes[p]
-            for q, inter in items:
-                v = prot_uid[q]
-                sp_v = species_name[species_id[q]]
-                jac = jaccard(inter, a, k_sizes[q])
-                w.writerow([u, v, inter, f"{jac:.6f}", sp_u, sp_v])
-
-    print(f"[OK] wrote candidates: {out_path}")'''
 
 def generate_candidates(
     prot_uid: List[str],
