@@ -10,8 +10,9 @@ Paper title:
 - `src/hgt_pipeline/`: core pipeline package
 - `src/graph_construction/`: pre-pipeline graph-construction steps (FASTA parsing, k-mer candidates, pruning)
 - `src/hgt_pipeline/stages/`: graph-analysis stages used by `pipeline.py`
-- `src/reporting/`: reporting/explanation scripts
-- `src/golden/`: regression baselines (canonical reference artifacts)
+- `tools/reporting/`: reporting/explanation scripts
+- `golden/`: regression baselines (canonical reference artifacts)
+- `artifacts/`: historical and transient run outputs
 - `tests/`: regression test suite
 - `docs/`: manuscript and supporting report material
 
@@ -21,14 +22,14 @@ From repository root (PowerShell):
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m hgt_pipeline.pipeline --in_edges src/golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv --out_dir tmp_run --no_betweenness
+python -m hgt_pipeline.pipeline --in_edges golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv --out_dir tmp_run --no_betweenness
 ```
 
 Graph-construction orchestration (manifest/downloads -> candidates -> pruned edges):
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m graph_construction.orchestrator construct-edges --manifest src/golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir src/golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
+python -m graph_construction.orchestrator construct-edges --manifest golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
 ```
 
 ## Regression tests
@@ -54,8 +55,8 @@ python tests/test_regression_baselines.py --mode graph_bw
 
 ## Data policy
 
-Large raw data is not tracked in git (`src/data/` ignored).  
-Regression relies on `src/golden/` fixtures, including small deterministic test inputs.
+Large raw data is not tracked in git (`data/` ignored).  
+Regression relies on `golden/` fixtures, including small deterministic test inputs.
 
 ## Citation
 

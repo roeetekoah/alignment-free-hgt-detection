@@ -6,7 +6,7 @@ Transient and historical run outputs live under this directory.
   - `rerun_results/`
   - `rerun_results_no_bw/`
 
-Canonical reproducibility baselines remain in `src/golden/`.
+Canonical reproducibility baselines remain in `golden/`.
 
 Historical hackathon deliverables were moved to:
 - `historical_results/results_hackathon_run/`

@@ -12,10 +12,10 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
-REPORTING_DIR = SRC_DIR / "reporting"
+REPORTING_DIR = REPO_ROOT / "tools" / "reporting"
 STAGES_DIR = SRC_DIR / "hgt_pipeline" / "stages"
 GRAPH_CONSTRUCTION_DIR = SRC_DIR / "graph_construction"
-GOLDEN_DIR = SRC_DIR / "golden"
+GOLDEN_DIR = REPO_ROOT / "golden"
 RUN_GRAPH_PIPELINE_REGRESSION = False
 RUN_GRAPH_PIPELINE_BW_REGRESSION = False
 RUN_KMER_FULL_REGRESSION = False
@@ -238,7 +238,7 @@ class RegressionBaselines(unittest.TestCase):
     def test_kmer_candidates_full_regression_matches_baseline(self):
         if not RUN_KMER_FULL_REGRESSION:
             self.skipTest("Full k-mer regression disabled for this run.")
-        if not (SRC_DIR / "data" / "out_refseq" / "downloads").exists():
+        if not (REPO_ROOT / "data" / "out_refseq" / "downloads").exists():
             self.skipTest("Full downloads set not available locally.")
         with tempfile.TemporaryDirectory() as tmp_dir_str:
             tmp_dir = Path(tmp_dir_str)
@@ -250,9 +250,9 @@ class RegressionBaselines(unittest.TestCase):
                     "graph_construction.orchestrator",
                     "build-candidates",
                     "--manifest",
-                    str(SRC_DIR / "data" / "out_refseq" / "manifest.tsv"),
+                    str(REPO_ROOT / "data" / "out_refseq" / "manifest.tsv"),
                     "--downloads_dir",
-                    str(SRC_DIR / "data" / "out_refseq" / "downloads"),
+                    str(REPO_ROOT / "data" / "out_refseq" / "downloads"),
                     "--out_candidates",
                     str(out_candidates),
                     "--k",
@@ -271,7 +271,7 @@ class RegressionBaselines(unittest.TestCase):
             )
 
             actual = pd.read_csv(out_candidates, sep="\t")
-            expected = pd.read_csv(SRC_DIR / "data" / "out_refseq" / "candidates.tsv", sep="\t")
+            expected = pd.read_csv(REPO_ROOT / "data" / "out_refseq" / "candidates.tsv", sep="\t")
             pd.testing.assert_frame_equal(actual, expected, check_dtype=False)
 
     def test_bw_explanations_match_golden(self):

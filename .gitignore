@@ -1,7 +1,6 @@
 /scripts/data/
 /data/
 /archives/
-/src/data/
 
 # Python cache/artifacts
 __pycache__/
@@ -12,8 +11,8 @@ __pycache__/
 .idea/
 
 # Local generated artifacts
-src/artifacts/legacy_runs/
-src/artifacts/historical_results/
+artifacts/legacy_runs/
+artifacts/historical_results/
 
 # Authoring/source docs not needed in code repo
 *.docx
@@ -22,8 +21,8 @@ src/artifacts/historical_results/
 # Large sequence inputs
 *.faa
 *.faa.gz
-!src/golden/reference_inputs/downloads_tiny/
-!src/golden/reference_inputs/downloads_tiny/*.faa.gz
+!golden/reference_inputs/downloads_tiny/
+!golden/reference_inputs/downloads_tiny/*.faa.gz
 
 # Misc local outputs
 *.log

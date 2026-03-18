@@ -111,5 +111,5 @@ python reporting/explain_top_candidates.py \
 
 ## Preserved Historical References
 
-- `hackathon_report_refs/` (copied from `src/artifacts/historical_results/results_hackathon_run/`)
-- `no_bw_pipeline/legacy_rerun_pruned_reference/` (copied from `src/rerun_pruned/`)
+- `hackathon_report_refs/` (copied from `artifacts/historical_results/results_hackathon_run/`)
+- `no_bw_pipeline/legacy_rerun_pruned_reference/` (copied from historical rerun outputs)
