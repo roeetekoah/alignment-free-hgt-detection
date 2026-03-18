@@ -21,23 +21,43 @@ Paper title:
 From repository root (PowerShell):
 
 ```powershell
-$env:PYTHONPATH = "src"
-python -m hgt_pipeline.pipeline --in_edges golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv --out_dir tmp_run --no_betweenness
+pushd src
 ```
 
-Graph-construction orchestration (manifest/downloads -> candidates -> pruned edges):
+### 1) Graph Construction (runs first)
+
+This stage produces the pruned edge list consumed by `hgt_pipeline.pipeline`.
 
 ```powershell
-$env:PYTHONPATH = "src"
-python -m graph_construction.orchestrator construct-edges --manifest golden/reference_inputs/manifest_tiny_set.tsv --downloads_dir golden/reference_inputs/downloads_tiny --out_candidates tmp_candidates.tsv --out_edges tmp_edges.tsv
+python -m graph_construction.orchestrator construct-edges --manifest ..\golden\reference_inputs\manifest_tiny_set.tsv --downloads_dir ..\golden\reference_inputs\downloads_tiny --out_candidates ..\tmp_candidates.tsv --out_edges ..\tmp_edges.tsv
+```
+
+For the full canonical run, the repository already includes the pruned input:
+- `golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv`
+
+### 2) HGT Pipeline (graph input -> features/candidates)
+
+With betweenness:
+
+```powershell
+python -m hgt_pipeline.pipeline --in_edges ..\golden\reference_inputs\edges_PRUNED_JACCARD_92790.tsv --out_dir ..\tmp_run_bw
+```
+
+Without betweenness (faster):
+
+```powershell
+python -m hgt_pipeline.pipeline --in_edges ..\golden\reference_inputs\edges_PRUNED_JACCARD_92790.tsv --out_dir ..\tmp_run_no_bw --no_betweenness
+popd
 ```
 
 Reviewer-facing, module-only E2E command lines are documented in [`REPRODUCE.md`](REPRODUCE.md).
 
 ```powershell
+pushd src
 python -m graph_construction.refseq_fetch_proteins --help
 python -m graph_construction.orchestrator --help
 python -m hgt_pipeline.pipeline --help
+popd
 ```
 
 ## Reproduce Component Plots (5, 8, 32)
@@ -45,8 +65,6 @@ python -m hgt_pipeline.pipeline --help
 From repository root (PowerShell):
 
 ```powershell
-$env:PYTHONPATH = "src"
-
 python tools/reporting/plot_components.py `
   --edges artifacts/legacy_runs/out/edge_features.tsv `
   --protein_features artifacts/legacy_runs/out/protein_features.tsv `
