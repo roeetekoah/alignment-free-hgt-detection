@@ -1,4 +1,4 @@
-# alignment-free-hgt-detection
+# Alignment-Free Detection of Horizontal Gene Transfer
 
 Alignment-free detection of horizontal gene transfer (HGT) candidates via protein similarity graphs, species-pair robust normalization, and graph anomaly scoring.
 
