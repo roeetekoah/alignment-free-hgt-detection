@@ -1,0 +1,27 @@
+/scripts/data/
+/data/
+/archives/
+/src/data/
+
+# Python cache/artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.idea/
+
+# Local generated artifacts
+src/artifacts/legacy_runs/
+src/artifacts/historical_results/
+
+# Authoring/source docs not needed in code repo
+*.docx
+*.pptx
+
+# Large sequence inputs
+*.faa
+*.faa.gz
+
+# Misc local outputs
+*.log
