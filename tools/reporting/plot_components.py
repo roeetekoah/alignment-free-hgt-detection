@@ -21,6 +21,7 @@ from typing import Dict, List, Optional
 
 import matplotlib.pyplot as plt
 import networkx as nx
+from matplotlib import colors as mcolors
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
@@ -106,11 +107,60 @@ def percentile_rank(xs: List[float], x: float) -> float:
 def distinct_species_palette() -> List[str]:
     # High-contrast categorical colors (colorblind-friendlier than default cycle).
     return [
-        "#0072B2", "#E69F00", "#009E73", "#D55E00", "#CC79A7", "#56B4E9",
-        "#F0E442", "#332288", "#1B9E77", "#E41A1C", "#4DAF4A", "#984EA3",
-        "#FF7F00", "#A65628", "#66A61E", "#17BECF", "#393B79", "#637939",
-        "#8C6D31", "#843C39",
+        "#0072B2", "#56B4E9", "#009E73", "#1B9E77", "#66A61E", "#A6D854",
+        "#F0E442", "#B3DE69", "#332288", "#393B79", "#7570B3", "#984EA3",
+        "#6A3D9A", "#8C6D31", "#A6761D", "#B15928", "#D62728", "#E41A1C",
+        "#17BECF", "#5AB4AC",
     ]
+
+
+def rgb_dist(c1: str, c2: str) -> float:
+    r1, g1, b1 = mcolors.to_rgb(c1)
+    r2, g2, b2 = mcolors.to_rgb(c2)
+    return math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
+
+
+def assign_species_colors(
+    top_species: List[str],
+    palette: List[str],
+    species_adj: Dict[str, set[str]],
+    species_counts: Counter,
+) -> Dict[str, str]:
+    # Greedy max-separation coloring on the species-interaction graph.
+    ordered_species = sorted(
+        top_species,
+        key=lambda sp: (len(species_adj.get(sp, set())), species_counts.get(sp, 0)),
+        reverse=True,
+    )
+    assigned: Dict[str, str] = {}
+    color_use: Counter = Counter()
+    used_once: set[str] = set()
+    for sp in ordered_species:
+        if len(used_once) < len(palette):
+            candidates = [c for c in palette if c not in used_once]
+        else:
+            candidates = list(palette)
+        best_color = candidates[0]
+        best_score = (-1.0, -1.0, float("-inf"))
+        for c in candidates:
+            neigh = [assigned[n] for n in species_adj.get(sp, set()) if n in assigned]
+            if neigh:
+                min_neigh = min(rgb_dist(c, nc) for nc in neigh)
+            else:
+                min_neigh = 10.0
+            if assigned:
+                min_global = min(rgb_dist(c, ac) for ac in assigned.values())
+            else:
+                min_global = 10.0
+            usage_bonus = -float(color_use[c])
+            score = (min_neigh, min_global, usage_bonus)
+            if score > best_score:
+                best_score = score
+                best_color = c
+        assigned[sp] = best_color
+        color_use[best_color] += 1
+        used_once.add(best_color)
+    return assigned
 
 
 def main():
@@ -212,10 +262,6 @@ def main():
             for u, v, _ in highlight_edges:
                 sp_in_hl[species_by_node[u]] += 1
                 sp_in_hl[species_by_node[v]] += 1
-            if have_scores:
-                topk = sorted(comp_nodes_now, key=lambda u: score_by_node.get(u, 0.0), reverse=True)[: args.top_score_outline]
-                for u in topk:
-                    sp_in_hl[species_by_node[u]] += 1
             # Ensure every species incident to bold edges is explicitly color-coded.
             top_species = [sp for sp, _ in sp_in_hl.most_common()]
             if not top_species:
@@ -224,9 +270,17 @@ def main():
             top_species = [sp for sp, _ in sp_counts.most_common(args.max_colored_species)]
 
         palette = distinct_species_palette()
-        sp_to_color: Dict[str, str] = {}
-        for i, sp in enumerate(top_species):
-            sp_to_color[sp] = palette[i % len(palette)]
+        top_set = set(top_species)
+        species_adj: Dict[str, set[str]] = defaultdict(set)
+        for u, v in g.edges():
+            su = species_by_node[u]
+            sv = species_by_node[v]
+            if su == sv:
+                continue
+            if su in top_set and sv in top_set:
+                species_adj[su].add(sv)
+                species_adj[sv].add(su)
+        sp_to_color = assign_species_colors(top_species, palette, species_adj, sp_counts)
         other_color = "#D0D0D0"
 
         node_size_map: Dict[str, float] = {}
@@ -238,11 +292,6 @@ def main():
         else:
             for u in comp_nodes_now:
                 node_size_map[u] = args.constant_node_size
-
-        outlined: set[str] = set()
-        if have_scores:
-            topk = sorted(comp_nodes_now, key=lambda u: score_by_node.get(u, 0.0), reverse=True)[: args.top_score_outline]
-            outlined = set(topk)
 
         base_edges = list(g.edges())
         hl = [(u, v) for (u, v, _) in highlight_edges]
@@ -266,12 +315,22 @@ def main():
             highlight_policy = f"Top-{args.max_highlight_edges} edges by z_robust"
         else:
             highlight_policy = f"Hard threshold: z >= {args.z_min_highlight:g}"
+        policy_lc = highlight_policy.lower()
+        if "top 5%" in policy_lc or "top5%" in policy_lc:
+            legend_policy = "top5%"
+        elif policy_lc.startswith("top-") and "edges" in policy_lc:
+            legend_policy = f"top{args.max_highlight_edges}"
+        elif "z >=" in policy_lc:
+            legend_policy = "z>=" + highlight_policy.split("z >=", 1)[1].strip()
+        elif "hard threshold:" in policy_lc and "z >=" in policy_lc:
+            legend_policy = "z>=" + highlight_policy.split("z >=", 1)[1].strip()
+        else:
+            legend_policy = "policy"
 
         caption = (
             "Each node is a protein. Each weighted edge encodes similarity between two proteins. "
             "Node color indicates the source species of that protein. "
             f"{size_text} "
-            "Red outlines mark top-scoring proteins. "
             f"Highlight policy: {highlight_policy}. "
             "Black edges are highlighted links; gray edges provide context. "
             f"Stats: nodes={n}, edges={m}, density={dens:.3f}."
@@ -279,7 +338,7 @@ def main():
         wrapped_caption = textwrap.fill(caption, width=125)
 
         legend_item_count = len(top_species) + 4
-        legend_cols = 3 if legend_item_count > 12 else 4
+        legend_cols = 3
         legend_rows = max(1, math.ceil(legend_item_count / legend_cols))
         extra_legend_height = max(0.0, (legend_rows - 2) * 0.7)
         caption_lines = wrapped_caption.count("\n") + 1
@@ -302,15 +361,14 @@ def main():
         def node_col(u: str) -> str:
             return sp_to_color.get(species_by_node[u], other_color)
 
-        non_outline_nodes = [u for u in g.nodes() if u not in outlined]
-        outline_nodes = [u for u in g.nodes() if u in outlined]
+        all_nodes = list(g.nodes())
 
         if args.no_fade_non_outlined:
-            non_outline_hi = non_outline_nodes
+            non_outline_hi = all_nodes
             non_outline_lo = []
         else:
-            non_outline_hi = [u for u in non_outline_nodes if u in hl_nodes]
-            non_outline_lo = [u for u in non_outline_nodes if u not in hl_nodes]
+            non_outline_hi = [u for u in all_nodes if u in hl_nodes]
+            non_outline_lo = [u for u in all_nodes if u not in hl_nodes]
 
         faded_size_mult = args.fade_scale if args.node_size_mode == "constant" else 1.0
 
@@ -332,19 +390,8 @@ def main():
                 node_color=[node_col(u) for u in non_outline_hi],
                 node_size=[node_size_map[u] for u in non_outline_hi],
                 alpha=1.0,
-                linewidths=0.0,
-            )
-        if outline_nodes:
-            outline_mult = args.outlined_size_mult_score if args.node_size_mode == "score" else args.outlined_size_mult_constant
-            nx.draw_networkx_nodes(
-                g,
-                pos,
-                nodelist=outline_nodes,
-                node_color=[node_col(u) for u in outline_nodes],
-                node_size=[node_size_map[u] * outline_mult for u in outline_nodes],
-                alpha=1.0,
-                linewidths=3.2,
-                edgecolors="#D00000",
+                linewidths=0.45,
+                edgecolors="#111111",
             )
 
         component_titles = {
@@ -361,10 +408,7 @@ def main():
             handles.append(Patch(facecolor=sp_to_color[sp], edgecolor="none", label=sp))
         handles.append(Patch(facecolor=other_color, edgecolor="none", label="Other species"))
         handles.append(Line2D([0], [0], color="#808080", lw=2, alpha=0.25, label="All edges"))
-        handles.append(Line2D([0], [0], color="black", lw=2.5, alpha=0.9, label=f"Highlighted edges ({highlight_policy})"))
-        handles.append(Line2D([0], [0], marker="o", color="none", markerfacecolor="white",
-                              markeredgecolor="#D00000", markeredgewidth=2.5, markersize=12,
-                              label=f"Outlined proteins: top-{args.top_score_outline} by score"))
+        handles.append(Line2D([0], [0], color="black", lw=2.5, alpha=0.9, label=f"Highlighted edges ({legend_policy})"))
         plt.gcf().legend(
             handles=handles,
             loc="lower center",
@@ -385,7 +429,7 @@ def main():
         )
 
         out_path = args.out_dir / f"component_{cid}.png"
-        plt.tight_layout(rect=[0, 0.18, 1, 0.94])
+        plt.tight_layout(rect=[0.04, 0.18, 0.96, 0.94])
         plt.savefig(out_path, dpi=args.dpi)
         plt.close()
         print(f"[OK] wrote {out_path}")
