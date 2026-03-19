@@ -131,6 +131,7 @@ python tools/reporting/plot_components.py `
   --protein_features golden/bw_pipeline/rerun_pruned/protein_features.tsv `
   --hgt_candidates golden/bw_pipeline/rerun_pruned/hgt_candidates.tsv `
   --component_ids 5,8,32 `
+  --z_min_highlight 3 `
   --node_size_mode score `
   --out_dir artifacts/updated_plots/detailed
 ```

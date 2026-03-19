@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
+import textwrap
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -101,6 +103,16 @@ def percentile_rank(xs: List[float], x: float) -> float:
     return le / len(xs)
 
 
+def distinct_species_palette() -> List[str]:
+    # High-contrast categorical colors (colorblind-friendlier than default cycle).
+    return [
+        "#0072B2", "#E69F00", "#009E73", "#D55E00", "#CC79A7", "#56B4E9",
+        "#F0E442", "#332288", "#1B9E77", "#E41A1C", "#4DAF4A", "#984EA3",
+        "#FF7F00", "#A65628", "#66A61E", "#17BECF", "#393B79", "#637939",
+        "#8C6D31", "#843C39",
+    ]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--edges", type=Path, required=True)
@@ -117,7 +129,7 @@ def main():
     ap.add_argument("--outlined_size_mult_constant", type=float, default=1.9)
     ap.add_argument("--outlined_size_mult_score", type=float, default=1.0)
     ap.add_argument("--top_score_outline", type=int, default=6)
-    ap.add_argument("--z_min_highlight", type=float, default=5.0)
+    ap.add_argument("--z_min_highlight", type=float, default=3.0)
     ap.add_argument("--max_highlight_edges", type=int, default=60)
     ap.add_argument("--color_mode", type=str, default="highlight", choices=["highlight", "frequency"])
     ap.add_argument("--max_colored_species", type=int, default=12)
@@ -128,12 +140,17 @@ def main():
     ap.add_argument("--context_edge_alpha", type=float, default=0.06)
 
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--figsize", type=str, default="11.69,8.27")
+    ap.add_argument("--figsize", type=str, default="11.69,9.8")
     ap.add_argument("--spring_k_scale", type=float, default=2.2,
                     help="Larger values spread nodes more in spring layout.")
+    ap.add_argument("--layout_y_scale", type=float, default=1.28,
+                    help="Multiply y coordinates after spring layout to stretch vertical separation.")
+    ap.add_argument("--layout_x_scale", type=float, default=0.94,
+                    help="Multiply x coordinates after spring layout to slightly compress horizontal spread.")
     ap.add_argument("--spring_iterations", type=int, default=250)
-    ap.add_argument("--legend_fontsize", type=int, default=10)
-    ap.add_argument("--caption_fontsize", type=int, default=11)
+    ap.add_argument("--title_fontsize", type=int, default=20)
+    ap.add_argument("--legend_fontsize", type=int, default=12)
+    ap.add_argument("--caption_fontsize", type=int, default=12)
     ap.add_argument("--dpi", type=int, default=900)
     args = ap.parse_args()
 
@@ -193,14 +210,14 @@ def main():
                 topk = sorted(comp_nodes_now, key=lambda u: score_by_node.get(u, 0.0), reverse=True)[: args.top_score_outline]
                 for u in topk:
                     sp_in_hl[species_by_node[u]] += 1
-            top_species = [sp for sp, _ in sp_in_hl.most_common(args.max_colored_species)]
+            # Ensure every species incident to bold edges is explicitly color-coded.
+            top_species = [sp for sp, _ in sp_in_hl.most_common()]
+            if not top_species:
+                top_species = [sp for sp, _ in sp_counts.most_common(args.max_colored_species)]
         else:
             top_species = [sp for sp, _ in sp_counts.most_common(args.max_colored_species)]
 
-        palette = [
-            "#1f77b4", "#2ca02c", "#9467bd", "#17becf", "#bcbd22", "#8c564b",
-            "#7f7f7f", "#e377c2", "#1b9e77", "#66a61e", "#7570b3", "#a6761d",
-        ]
+        palette = distinct_species_palette()
         sp_to_color: Dict[str, str] = {}
         for i, sp in enumerate(top_species):
             sp_to_color[sp] = palette[i % len(palette)]
@@ -230,10 +247,40 @@ def main():
             hl_nodes.add(u)
             hl_nodes.add(v)
 
+        n = g.number_of_nodes()
+        m = g.number_of_edges()
+        dens = (2.0 * m) / (n * (n - 1.0)) if n > 1 else 0.0
+        if args.node_size_mode == "score":
+            size_text = "Node size reflects the assigned HGT candidate score (larger means higher score)."
+        else:
+            size_text = "Node size is constant in this rendering mode."
+        caption = (
+            "Each node is a protein. Each weighted edge encodes similarity between two proteins. "
+            "Node color indicates the source species of that protein. "
+            f"{size_text} "
+            "Red outlines mark top-scoring proteins. "
+            f"Black edges are high-surprise links (z >= {args.z_min_highlight}); gray edges provide context. "
+            f"Stats: nodes={n}, edges={m}, density={dens:.3f}."
+        )
+        wrapped_caption = textwrap.fill(caption, width=125)
+
+        legend_item_count = len(top_species) + 4
+        legend_cols = 3 if legend_item_count > 12 else 4
+        legend_rows = max(1, math.ceil(legend_item_count / legend_cols))
+        extra_legend_height = max(0.0, (legend_rows - 2) * 0.7)
+        caption_lines = wrapped_caption.count("\n") + 1
+        extra_caption_height = max(0.55, (caption_lines - 1) * 0.22)
+        fig_h_local = fig_h + extra_legend_height + extra_caption_height
+
         n_layout = g.number_of_nodes()
         k = args.spring_k_scale / (max(1, n_layout) ** 0.5)
         pos = nx.spring_layout(g, seed=args.seed, k=k, iterations=args.spring_iterations)
-        plt.figure(figsize=(fig_w, fig_h))
+        if args.layout_y_scale != 1.0 or args.layout_x_scale != 1.0:
+            pos = {
+                u: (xy[0] * args.layout_x_scale, xy[1] * args.layout_y_scale)
+                for u, xy in pos.items()
+            }
+        plt.figure(figsize=(fig_w, fig_h_local))
         nx.draw_networkx_edges(g, pos, edgelist=base_edges, width=0.6, alpha=0.10, edge_color="#808080")
         if hl:
             nx.draw_networkx_edges(g, pos, edgelist=hl, width=hl_widths, alpha=0.9, edge_color="black")
@@ -286,16 +333,13 @@ def main():
                 edgecolors="#D00000",
             )
 
-        n = g.number_of_nodes()
-        m = g.number_of_edges()
-        dens = (2.0 * m) / (n * (n - 1.0)) if n > 1 else 0.0
         component_titles = {
             5: "Broad Multi-Taxa Exchange Module",
             8: "Chained Cross-Species Connectivity",
             32: "Localized High-Confidence Bridges",
         }
         title_suffix = component_titles.get(cid, "Cross-Species Transfer Signal Map")
-        plt.title(f"Component {cid}: {title_suffix}", fontsize=16)
+        plt.title(f"Component {cid}: {title_suffix}", fontsize=args.title_fontsize)
         plt.axis("off")
 
         handles = []
@@ -311,18 +355,20 @@ def main():
             handles=handles,
             loc="lower center",
             bbox_to_anchor=(0.5, 0.085),
-            ncol=4,
+            ncol=legend_cols,
             frameon=True,
             fontsize=args.legend_fontsize,
         )
 
-        caption = (
-            f"Caption: Node color = species; node size mode = {args.node_size_mode}. "
-            "Red outlines mark top-scoring proteins. "
-            f"Black edges are high-surprise links (z >= {args.z_min_highlight}); gray edges provide context. "
-            f"Stats: nodes={n}, edges={m}, density={dens:.3f}."
+        plt.figtext(
+            0.06,
+            0.02,
+            wrapped_caption,
+            ha="left",
+            va="bottom",
+            fontsize=args.caption_fontsize,
+            multialignment="left",
         )
-        plt.figtext(0.5, 0.02, caption, ha="center", va="bottom", fontsize=args.caption_fontsize, wrap=True)
 
         out_path = args.out_dir / f"component_{cid}.png"
         plt.tight_layout(rect=[0, 0.18, 1, 0.94])

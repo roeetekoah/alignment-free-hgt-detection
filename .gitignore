@@ -31,3 +31,4 @@ artifacts/historical_results/
 
 # Misc local outputs
 *.log
+tmp/
