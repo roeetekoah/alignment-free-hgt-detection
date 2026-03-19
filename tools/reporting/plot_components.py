@@ -152,6 +152,12 @@ def main():
     ap.add_argument("--legend_fontsize", type=int, default=12)
     ap.add_argument("--caption_fontsize", type=int, default=12)
     ap.add_argument("--dpi", type=int, default=900)
+    ap.add_argument(
+        "--highlight_policy_label",
+        type=str,
+        default="",
+        help="Optional caption/legend label for highlighted-edge policy (e.g., 'Top 5%% by z_robust').",
+    )
     args = ap.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -254,12 +260,20 @@ def main():
             size_text = "Node size reflects the assigned HGT candidate score (larger means higher score)."
         else:
             size_text = "Node size is constant in this rendering mode."
+        if args.highlight_policy_label.strip():
+            highlight_policy = args.highlight_policy_label.strip()
+        elif args.z_min_highlight <= -900:
+            highlight_policy = f"Top-{args.max_highlight_edges} edges by z_robust"
+        else:
+            highlight_policy = f"Hard threshold: z >= {args.z_min_highlight:g}"
+
         caption = (
             "Each node is a protein. Each weighted edge encodes similarity between two proteins. "
             "Node color indicates the source species of that protein. "
             f"{size_text} "
             "Red outlines mark top-scoring proteins. "
-            f"Black edges are high-surprise links (z >= {args.z_min_highlight}); gray edges provide context. "
+            f"Highlight policy: {highlight_policy}. "
+            "Black edges are highlighted links; gray edges provide context. "
             f"Stats: nodes={n}, edges={m}, density={dens:.3f}."
         )
         wrapped_caption = textwrap.fill(caption, width=125)
@@ -347,7 +361,7 @@ def main():
             handles.append(Patch(facecolor=sp_to_color[sp], edgecolor="none", label=sp))
         handles.append(Patch(facecolor=other_color, edgecolor="none", label="Other species"))
         handles.append(Line2D([0], [0], color="#808080", lw=2, alpha=0.25, label="All edges"))
-        handles.append(Line2D([0], [0], color="black", lw=2.5, alpha=0.9, label=f"High-surprise edges (z >= {args.z_min_highlight})"))
+        handles.append(Line2D([0], [0], color="black", lw=2.5, alpha=0.9, label=f"Highlighted edges ({highlight_policy})"))
         handles.append(Line2D([0], [0], marker="o", color="none", markerfacecolor="white",
                               markeredgecolor="#D00000", markeredgewidth=2.5, markersize=12,
                               label=f"Outlined proteins: top-{args.top_score_outline} by score"))
