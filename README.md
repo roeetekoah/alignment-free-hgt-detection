@@ -27,7 +27,7 @@ The pipeline asks:
 
 The active manuscript is self-contained under [`paper/`](paper/), including
 its figures in [`paper/figures/`](paper/figures/).  
-Read the full paper at [`paper/main.tex`](paper/main.tex).
+Read the full paper at [`paper/main.pdf`](paper/main.pdf).
 
 ---
 
