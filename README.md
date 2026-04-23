@@ -3,7 +3,7 @@
 <p><strong>via Protein Similarity Graphs and Anomaly Scoring</strong></p>
 
 **GraFT** stands for **Gra**ph-based **F**inder of **T**ransfers. This repository
-contains the GraFT pipeline only: an alignment-free k-mer Jaccard workflow for
+contains the GraFT pipeline: an alignment-free k-mer Jaccard workflow for
 detecting horizontal gene transfer (HGT) candidates across bacterial proteomes
 without whole-genome alignment or phylogenetic reconstruction.
 

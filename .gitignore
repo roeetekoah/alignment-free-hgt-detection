@@ -44,3 +44,5 @@ paper/*.toc
 # Misc local outputs
 *.log
 tmp/
+/paper/to_improve.txt
+/.claude/settings.local.json
