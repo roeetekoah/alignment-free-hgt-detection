@@ -13,8 +13,8 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 REPORTING_DIR = REPO_ROOT / "tools" / "reporting"
-STAGES_DIR = SRC_DIR / "hgt_pipeline" / "stages"
-GRAPH_CONSTRUCTION_DIR = SRC_DIR / "graph_construction"
+STAGES_DIR = SRC_DIR / "graft" / "stages"
+GRAPH_CONSTRUCTION_DIR = SRC_DIR / "graft" / "graph_construction"
 GOLDEN_DIR = REPO_ROOT / "golden"
 RUN_GRAPH_PIPELINE_REGRESSION = False
 RUN_GRAPH_PIPELINE_BW_REGRESSION = False
@@ -75,7 +75,7 @@ class RegressionBaselines(unittest.TestCase):
 
             cmd = [
                 "-m",
-                "hgt_pipeline.pipeline",
+                "graft.pipeline",
                 "--in_edges",
                 str(GOLDEN_DIR / "reference_inputs" / "edges_PRUNED_JACCARD_92790.tsv"),
                 "--out_dir",
@@ -166,7 +166,7 @@ class RegressionBaselines(unittest.TestCase):
             run_python(
                 [
                     "-m",
-                    "graph_construction.orchestrator",
+                    "graft.graph_construction.orchestrator",
                     "build-candidates",
                     "--manifest",
                     str(GOLDEN_DIR / "reference_inputs" / "manifest_tiny_set.tsv"),
@@ -247,7 +247,7 @@ class RegressionBaselines(unittest.TestCase):
             run_python(
                 [
                     "-m",
-                    "graph_construction.orchestrator",
+                    "graft.graph_construction.orchestrator",
                     "build-candidates",
                     "--manifest",
                     str(REPO_ROOT / "data" / "out_refseq" / "manifest.tsv"),

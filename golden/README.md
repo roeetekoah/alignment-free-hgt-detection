@@ -11,7 +11,7 @@ This directory is the canonical regression source for tidy/refactor work.
 Generated on `2026-03-18` with:
 
 ```bash
-python hgt_pipeline/pipeline.py \
+python -m graft.pipeline \
   --in_edges ./data/out_refseq/edges_PRUNED_JACCARD_92790.tsv \
   --out_dir ./golden/no_bw_pipeline/rerun_pruned \
   --no_betweenness
@@ -53,7 +53,7 @@ Derived outputs:
 Generated on `2026-03-18` with:
 
 ```bash
-python hgt_pipeline/pipeline.py \
+python -m graft.pipeline \
   --in_edges ./golden/reference_inputs/edges_PRUNED_JACCARD_92790.tsv \
   --out_dir ./golden/bw_pipeline/rerun_pruned
 ```

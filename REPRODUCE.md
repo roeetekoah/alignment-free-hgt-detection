@@ -1,8 +1,8 @@
 # Reproduce End-to-End (Module CLIs)
 
 This document uses only the two module entrypoints used in the codebase:
-- `graph_construction.*` (including the graph-construction orchestrator)
-- `hgt_pipeline.pipeline`
+- `graft.graph_construction.*` (including the graph-construction orchestrator)
+- `graft.pipeline`
 
 No `reproduce.py` wrapper is required.
 
@@ -22,7 +22,7 @@ Canonical manifest is tracked in the repo at:
 1. Build manifest from assembly summary and species config:
 
 ```powershell
-python -m graph_construction.refseq_fetch_proteins `
+python -m graft.graph_construction.refseq_fetch_proteins `
   --assembly_summary data/assembly_summary_refseq.txt `
   --species_list config/species.txt `
   --out_dir tmp/e2e_review/graph_construction `
@@ -33,7 +33,7 @@ python -m graph_construction.refseq_fetch_proteins `
 2. Construct graph inputs with the graph-construction orchestrator:
 
 ```powershell
-python -m graph_construction.orchestrator construct-edges `
+python -m graft.graph_construction.orchestrator construct-edges `
   --manifest tmp/e2e_review/graph_construction/manifest.tsv `
   --downloads_dir data/out_refseq/downloads `
   --out_candidates tmp/e2e_review/run/candidates.tsv `
@@ -44,12 +44,12 @@ python -m graph_construction.orchestrator construct-edges `
 3. Run the analysis pipeline (no betweenness, then betweenness):
 
 ```powershell
-python -m hgt_pipeline.pipeline `
+python -m graft.pipeline `
   --in_edges tmp/e2e_review/run/edges_pruned.tsv `
   --out_dir tmp/e2e_review/run/pipeline_no_bw `
   --no_betweenness
 
-python -m hgt_pipeline.pipeline `
+python -m graft.pipeline `
   --in_edges tmp/e2e_review/run/edges_pruned.tsv `
   --out_dir tmp/e2e_review/run/pipeline_bw
 ```

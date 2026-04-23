@@ -56,9 +56,9 @@ python reproduce.py from-assembly-summary `
 ```
 
 This runs:
-1. `graph_construction.refseq_fetch_proteins` (manifest + FASTA downloads)
-2. `graph_construction.orchestrator construct-edges` (candidates + pruned edges)
-3. `hgt_pipeline.pipeline` (feature extraction + scoring)
+1. `graft.graph_construction.refseq_fetch_proteins` (manifest + FASTA downloads)
+2. `graft.graph_construction.orchestrator construct-edges` (candidates + pruned edges)
+3. `graft.pipeline` (feature extraction + scoring)
 4. `tools/reporting/*` (report tables and explanations)
 
 ## Assembly Summary Source

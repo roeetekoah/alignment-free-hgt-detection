@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Iterable, List
 
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 TOOLS_REPORTING_DIR = REPO_ROOT / "tools" / "reporting"
 
@@ -35,7 +35,7 @@ def run_pipeline_and_reports(
 
     pipeline_cmd = [
         "-m",
-        "hgt_pipeline.pipeline",
+        "graft.pipeline",
         "--in_edges",
         str(edges_path.resolve()),
         "--out_dir",
@@ -201,7 +201,7 @@ def main() -> None:
         run_step(
             [
                 "-m",
-                "graph_construction.orchestrator",
+                "graft.graph_construction.orchestrator",
                 "construct-edges",
                 "--manifest",
                 str(args.manifest.resolve()),
@@ -245,7 +245,7 @@ def main() -> None:
         run_step(
             [
                 "-m",
-                "graph_construction.refseq_fetch_proteins",
+                "graft.graph_construction.refseq_fetch_proteins",
                 "--assembly_summary",
                 str(args.assembly_summary.resolve()),
                 "--species_list",
@@ -289,4 +289,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

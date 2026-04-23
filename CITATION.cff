@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "Alignment-Free Detection of Horizontal Gene Transfer Candidates via Protein Similarity Graphs and Anomaly Scoring"
+title: "GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates via Protein Similarity Graphs and Anomaly Scoring"
 version: "0.1.0"
 date-released: 2026-03-18
-repository-code: "https://github.com/roeetekoah/alignment-free-hgt-detection"
+repository-code: "https://github.com/roeetekoah/GraFT"
 authors:
   - family-names: "Tekoah"
     given-names: "Roee"

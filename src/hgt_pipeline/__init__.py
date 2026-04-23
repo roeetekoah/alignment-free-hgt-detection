@@ -1,2 +1,0 @@
-"""HGT pipeline package."""
-
