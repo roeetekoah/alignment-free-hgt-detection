@@ -5,6 +5,7 @@ title: "GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates v
 version: "0.1.0"
 date-released: 2026-03-18
 repository-code: "https://github.com/roeetekoah/GraFT"
+license: "GPL-3.0-only"
 authors:
   - family-names: "Tekoah"
     given-names: "Roee"

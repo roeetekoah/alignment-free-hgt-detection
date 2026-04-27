@@ -8,6 +8,12 @@ version = "0.1.0"
 description = "Alignment-free detection of horizontal gene transfer candidates via protein similarity graphs and anomaly scoring."
 readme = "README.md"
 requires-python = ">=3.9"
+license = { file = "LICENSE" }
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+]
 dependencies = [
   "pandas>=1.5",
   "networkx>=2.8",
