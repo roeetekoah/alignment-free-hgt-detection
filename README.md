@@ -1,7 +1,7 @@
 <table>
   <tr>
     <td width="220" align="center">
-      <img src="assets/logo-readme-lockup.png" alt="GraFT logo" width="190">
+      <img src="assets/logo-readme-lockup-card.png" alt="GraFT logo" width="190">
     </td>
     <td>
       <h1>GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates</h1>
