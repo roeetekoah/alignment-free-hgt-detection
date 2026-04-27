@@ -1,6 +1,14 @@
-# GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates
-
-<p><strong>via Protein Similarity Graphs and Anomaly Scoring</strong></p>
+<table>
+  <tr>
+    <td width="150" align="center">
+      <img src="assets/logo-readme-mark.png" alt="GraFT logo mark" width="130">
+    </td>
+    <td>
+      <h1>GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates</h1>
+      <p><strong>via Protein Similarity Graphs and Anomaly Scoring</strong></p>
+    </td>
+  </tr>
+</table>
 
 **GraFT** stands for **Gra**ph-based **F**inder of **T**ransfers. This repository
 contains the GraFT pipeline: an alignment-free k-mer Jaccard workflow for
@@ -260,12 +268,13 @@ Reporting scripts can additionally create:
 
 The canonical analysis highlights graph components where cross-species protein
 similarity is concentrated in unusually strong edges. Components 5, 8, and 32
-are preserved as report references and can be regenerated with the plotting
-script below.
+are shown below as compact previews. Click any component to open the
+high-resolution render with legible species colors, candidate-node sizing, and
+highlighted anomalous edges.
 
 | Component 5 | Component 8 | Component 32 |
 |---|---|---|
-| ![Component 5](golden/hackathon_report_refs/component_5.png) | ![Component 8](golden/hackathon_report_refs/component_8.png) | ![Component 32](golden/hackathon_report_refs/component_32.png) |
+| [![Component 5 high-resolution graph](artifacts/updated_plots/topk/component_5.png)](artifacts/updated_plots/topk/component_5.png) | [![Component 8 high-resolution graph](artifacts/updated_plots/topk/component_8.png)](artifacts/updated_plots/topk/component_8.png) | [![Component 32 high-resolution graph](artifacts/updated_plots/topk/component_32.png)](artifacts/updated_plots/topk/component_32.png) |
 
 Recreate these plots:
 
@@ -275,9 +284,11 @@ python tools\reporting\plot_components.py `
   --protein_features golden\bw_pipeline\rerun_pruned\protein_features.tsv `
   --hgt_candidates golden\bw_pipeline\rerun_pruned\hgt_candidates.tsv `
   --component_ids 5,8,32 `
-  --z_min_highlight 3 `
+  --z_min_highlight -999 `
+  --max_highlight_edges 60 `
+  --highlight_policy_label "Top-60 edges by z_robust" `
   --node_size_mode score `
-  --out_dir artifacts\updated_plots\detailed
+  --out_dir artifacts\updated_plots\topk
 ```
 
 ---
