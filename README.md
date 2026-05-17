@@ -4,8 +4,8 @@
       <img src="assets/logo-readme-lockup-card.png" alt="GraFT logo" width="190">
     </td>
     <td>
-      <h1>GraFT: Alignment-Free Detection of Horizontal Gene Transfer Candidates</h1>
-      <p><strong>via Protein Similarity Graphs and Anomaly Scoring</strong></p>
+      <h1>GraFT: Graph-based Finder of Transfers</h1>
+      <p><strong>Alignment-Free Detection of Horizontal Gene Transfer Candidates via Protein Similarity Graphs and Anomaly Scoring</strong></p>
     </td>
   </tr>
 </table>
